@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>时光回溯站 · 网页快照调取系统</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="page-archive">
+    <div class="archive-card">
+      <h1 class="archive-title">时光回溯站 · 网页快照调取系统</h1>
+      <p class="archive-desc">输入目标网页完整地址，调取过去留存的页面。错误网址无法检索网页快照。</p>
+
+      <label class="archive-label" for="urlInput">目标网页完整域名</label>
+      <input id="urlInput" class="archive-input" type="text"
+             placeholder="请输入完整网址" autocomplete="off" spellcheck="false">
+      <button id="btnFetch" class="archive-btn">调取快照</button>
+
+      <div class="archive-loading" id="archiveLoading">
+        <div class="spinner"></div>
+        <div class="loading-text">正在回溯2015时间线，调取被遗忘记录</div>
+      </div>
+
+      <p class="archive-hint">※ 本站仅保留部分年份的残缺快照，调取结果可能不完整。</p>
+    </div>
+
+    <a href="index.html" class="archive-back">← 返回辛巴论坛</a>
+  </div>
+
+  <!-- 错误提示弹窗 -->
+  <div class="dialog-mask" id="dialogMask">
+    <div class="dialog">
+      <div class="dialog-text" id="dialogText"></div>
+      <button class="dialog-btn" id="dialogOk">确定</button>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>

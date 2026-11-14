@@ -1,0 +1,262 @@
+/* ============================================================
+   《找到我》公共样式
+   页面1 辛巴论坛 / 页面2 时光回溯站 / 页面3 顾星博客 / 页面4 后台
+   ============================================================ */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
+               "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: #0e1013;
+  color: #e0e0e0;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+body.ending-active { overflow: hidden; }
+
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; cursor: pointer; }
+
+/* ---------------- 页面1：辛巴论坛 ---------------- */
+#page-forum {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #14161a;
+}
+.forum-header {
+  background: #17191d;
+  border-bottom: 1px solid #23262b;
+  padding: 18px 20px;
+  text-align: center;
+}
+.forum-logo { font-size: 20px; font-weight: 600; letter-spacing: 1px; color: #f0f1f3; }
+.forum-sub { font-size: 12px; color: #6c7278; margin-top: 4px; letter-spacing: 0.5px; }
+.forum-main { flex: 1; max-width: 960px; margin: 0 auto; padding: 26px 20px 40px; width: 100%; }
+.forum-layout { display: grid; grid-template-columns: 1fr 240px; gap: 20px; align-items: start; }
+.forum-thread { background: #1a1d21; border: 1px solid #24282d; border-radius: 10px; padding: 24px 26px; }
+.thread-title { font-size: 18px; font-weight: 600; line-height: 1.6; color: #f2f3f5; margin-bottom: 10px; }
+.thread-meta { font-size: 12.5px; color: #71777e; padding-bottom: 16px; border-bottom: 1px solid #23272c; }
+.post p { font-size: 15px; line-height: 1.95; color: #c6cacf; padding: 16px 0; }
+.reply { padding: 14px 0; border-top: 1px solid #21252a; }
+.reply-meta { font-size: 12.5px; color: #7a8087; margin-bottom: 8px; }
+.reply-body { font-size: 14.5px; line-height: 1.9; color: #c0c5cb; }
+.url { color: #8ea9c9; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13.5px; }
+.thread-action { padding-top: 20px; border-top: 1px solid #21252a; }
+.btn {
+  display: inline-block;
+  background: #2b5f9e;
+  color: #fff;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+.btn:hover { background: #356fb5; }
+.forum-sidebar { display: flex; flex-direction: column; gap: 14px; }
+.sidebar-card { background: #1a1d21; border: 1px solid #24282d; border-radius: 10px; padding: 16px 18px; }
+.sidebar-title { font-size: 12.5px; color: #8b929a; letter-spacing: 1px; margin-bottom: 10px; }
+.sidebar-list { list-style: none; font-size: 13.5px; line-height: 2.1; color: #b4babf; }
+.sidebar-list b { color: #e8e9ea; font-weight: 600; }
+.forum-footer { text-align: center; font-size: 12px; color: #5c6268; padding: 22px 0 26px; }
+.flicker { transition: opacity 0.15s; }
+
+/* ---------------- 页面2：时光回溯站 ---------------- */
+#page-archive {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #e9ecef;
+  color: #2b3038;
+  padding: 44px 20px;
+  position: relative;
+}
+#page-archive::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.22;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+.archive-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 600px;
+  background: #fbfcfd;
+  border: 1px solid #ccd3da;
+  border-radius: 6px;
+  box-shadow: 0 8px 28px rgba(30, 40, 55, 0.09);
+  padding: 36px 40px 32px;
+}
+.archive-title { font-size: 18px; font-weight: 600; color: #20262e; margin-bottom: 10px; letter-spacing: 0.5px; }
+.archive-desc { font-size: 13.5px; line-height: 1.85; color: #5c6672; margin-bottom: 26px; }
+.archive-label { display: block; font-size: 12.5px; color: #7a8593; letter-spacing: 0.5px; margin-bottom: 8px; }
+.archive-input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 14.5px;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  color: #20262e;
+  background: #f4f6f8;
+  border: 1px solid #c3ccd6;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.archive-input:focus { border-color: #7d93ad; background: #fff; }
+.archive-btn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  background: #39485a;
+  color: #f0f4f8;
+  font-size: 14.5px;
+  letter-spacing: 3px;
+  transition: background 0.2s;
+}
+.archive-btn:hover { background: #465a70; }
+.archive-btn:disabled { background: #9aa6b4; cursor: default; }
+.archive-loading { display: none; margin-top: 26px; text-align: center; }
+.archive-loading.show { display: block; }
+.spinner {
+  width: 26px;
+  height: 26px;
+  margin: 0 auto 14px;
+  border: 2px solid #d4dbe3;
+  border-top-color: #39485a;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 13.5px; color: #55606d; letter-spacing: 0.5px; }
+.archive-hint { margin-top: 22px; font-size: 12px; line-height: 1.8; color: #98a2ae; }
+.archive-back { position: relative; z-index: 1; margin-top: 26px; font-size: 13px; color: #5c6672; transition: color 0.2s; }
+.archive-back:hover { color: #20262e; }
+
+/* ---------------- 页面3：顾星博客 ---------------- */
+#page-blog {
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  background: radial-gradient(ellipse at 50% -10%, #16204a 0%, #0b1026 45%, #05070f 100%);
+  color: #c9d3ee;
+}
+#starfield { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: #dfe8ff;
+  box-shadow: 0 0 4px rgba(200, 220, 255, 0.7);
+  animation-name: floatStar;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+@keyframes floatStar {
+  0%   { transform: translateY(0);     opacity: 0.16; }
+  50%  { transform: translateY(-14px); opacity: 0.85; }
+  100% { transform: translateY(0);     opacity: 0.16; }
+}
+.blog-wrap { position: relative; z-index: 1; max-width: 980px; margin: 0 auto; padding: 24px 18px 48px; }
+.blog-leave { display: inline-block; font-size: 12px; color: #5a6890; margin-bottom: 18px; letter-spacing: 1px; transition: color 0.2s; }
+.blog-leave:hover { color: #8fa4d8; }
+.blog-header { margin-bottom: 22px; }
+.blog-title {
+  font-size: 30px;
+  color: #ffd76e;
+  letter-spacing: 3px;
+  text-shadow: 0 0 10px rgba(255, 215, 110, 0.45), 0 0 22px rgba(255, 180, 60, 0.2);
+  margin-bottom: 6px;
+}
+.blog-subtitle { font-size: 13px; color: #7fd4e8; letter-spacing: 2px; }
+.blog-layout { display: grid; grid-template-columns: 1fr 250px; gap: 20px; align-items: start; }
+.blog-main { background: rgba(10, 15, 34, 0.74); border: 1px solid #222c52; border-radius: 5px; padding: 20px 22px; }
+.blog-welcome {
+  font-size: 14px;
+  line-height: 2;
+  color: #d3dbf2;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #222c52;
+}
+.blog-nav { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 0; border-bottom: 1px solid #222c52; margin-bottom: 16px; }
+.nav-item {
+  padding: 6px 12px;
+  font-size: 13px;
+  color: #8fa4d8;
+  border: 1px solid #33406b;
+  border-radius: 3px;
+  transition: all 0.2s;
+  user-select: none;
+}
+.nav-item:hover { background: #1c2650; }
+.nav-item.active { background: #2b3a6b; border-color: #4a5c96; color: #ffd76e; }
+.blog-panel { display: none; }
+.blog-panel.active { display: block; }
+.diary-entry { background: rgba(255, 255, 255, 0.022); border-left: 2px solid #3a4a80; padding: 11px 14px; margin-bottom: 15px; }
+.diary-date { font-size: 12px; color: #7f92c4; margin-bottom: 6px; letter-spacing: 0.5px; }
+.diary-text { font-size: 13.8px; line-height: 2; color: #c3cde8; }
+.album-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+.photo-frame {
+  position: relative;
+  height: 120px;
+  border: 1px solid #2c3866;
+  border-radius: 3px;
+  background: #0d1430;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.photo-frame::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 40%;
+  background: linear-gradient(180deg, #2a3560, #1a2347);
+}
+.photo-frame::after {
+  content: "";
+  position: absolute;
+  top: 40%; left: 0; right: 0;
+  height: 1px;
+  background: #2a3560;
+}
+.photo-tip { position: relative; z-index: 1; font-size: 11px; color: #5f6f9e; letter-spacing: 0.5px; }
+.photo-cap { margin-top: 8px; font-size: 12px; line-height: 1.65; color: #8b9cc9; }
+.album-note { font-size: 12.5px; color: #7f92c4; margin-bottom: 16px; line-height: 1.8; }
+.guest-entry { background: rgba(255, 255, 255, 0.03); border: 1px solid #26305a; border-radius: 3px; padding: 12px 14px; margin-bottom: 12px; }
+.guest-head { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 12px; color: #7f92c4; margin-bottom: 6px; }
+.guest-body { font-size: 13.5px; line-height: 1.9; color: #c3cde8; }
+.blog-side { display: flex; flex-direction: column; gap: 14px; }
+.widget { background: rgba(18, 24, 48, 0.86); border: 1px solid #2a3560; border-radius: 4px; overflow: hidden; }
+.widget-title {
+  padding: 6px 10px;
+  font-size: 12.5px;
+  color: #a9c4ff;
+  letter-spacing: 1px;
+  background: linear-gradient(#26345f, #1b2447);
+  border-bottom: 1px solid #2a3560;
+}
+.widget-body { padding: 10px 12px; font-size: 13px; line-height: 1.95; color: #b9c5e6; }
+.avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+  color: #0b1026;
+  background: radial-gradient(circle at 30% 30%, #ffe9a8, #ffc247);
+  box-shadow: 0 0 12px rgba(255, 200, 80, 0.4);
+}
+.muted { color: #6f7ea8; font-size: 12px; }
+.counter { font-family: ui-monospace, M

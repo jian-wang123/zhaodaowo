@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>记忆核验室</title>
+<style>
+/* ============================================================
+   页面4：记忆核验室 · 加长版
+   一页一题 + 每题长旁白 + 隐藏计分 + 双结局超长文案
+   ============================================================ */
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
+               "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: radial-gradient(ellipse at 50% -5%, #111a30 0%, #0a0c14 50%, #07080c 100%);
+  color: #b8c0cc;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+body.ending-active { overflow: hidden; }
+
+/* 淡淡噪点 */
+.noise {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.65'/%3E%3C/svg%3E");
+}
+
+.lab-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 54px 22px 90px;
+}
+
+.lab-leave {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #3f4a63;
+  margin-bottom: 34px;
+  transition: color 0.25s;
+}
+.lab-leave:hover { color: #7d8cb0; }
+
+.lab-title {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: 6px;
+  color: #dfe6f2;
+  text-shadow: 0 0 18px rgba(150,180,255,0.16);
+  margin-bottom: 12px;
+}
+.lab-subtitle {
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: #4e5b78;
+  margin-bottom: 34px;
+}
+
+/* 开篇导语 */
+.intro-desc {
+  font-size: 14.5px;
+  line-height: 2.15;
+  color: #8f99ab;
+  border-left: 2px solid #26304a;
+  padding: 4px 0 4px 18px;
+  margin-bottom: 40px;
+  white-space: pre-line;
+}
+
+.btn-line {
+  display: inline-block;
+  padding: 12px 42px;
+  border: 1px solid #39466b;
+  border-radius: 4px;
+  background: transparent;
+  color: #a9b7d8;
+  font-size: 14px;
+  letter-spacing: 4px;
+  transition: border-color 0.25s, color 0.25s, background 0.25s;
+}
+.btn-line:hover {
+  border-color: #55679a;
+  color: #d5def2;
+  background: rgba(90,120,190,0.07);
+}
+
+.quiz-view { display: block; }
+[hidden] { display: none !important; }
+
+.progress-line {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #55617a;
+  margin-bottom: 18px;
+}
+.progress-line b { color: #9fb0d2; font-weight: 600; }
+
+/* 每题长旁白 */
+.q-narration {
+  font-size: 13.5px;
+  line-height: 2.05;
+  color: #7d8aa6;
+  border-left: 2px solid #222b42;
+  padding: 2px 0 2px 16px;
+  margin-bottom: 24px;
+  white-space: pre-line;
+}
+
+.q-block.anim { animation: qFadeUp 0.4s ease; }
+@keyframes qFadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.q-title {
+  font-size: 17px;
+  line-height: 1.9;
+  color: #dbe2ee;
+  margin-bottom: 24px;
+}
+
+.q-options { display: flex; flex-direction: column; gap: 10px; }
+
+.opt {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #232b3a;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.018);
+  color: #aab4c6;
+  font-size: 14px;
+  line-height: 1.7;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+.opt:hover {
+  border-color: #35415c;
+  background: rgba(255,255,255,0.04);
+  color: #cbd4e4;
+}
+.opt.selected {
+  border-color: rgba(255,215,110,0.55);
+  background: rgba(255,215,110,0.05);
+  color: #f0e2b8;
+}
+.opt-letter { flex: 0 0 auto; font-size: 12.5px; letter-spacing: 1px; color: #5e6c8a; }
+.opt.selected .opt-letter { color: #d8c186; }
+
+.next-btn {
+  width: 100%;
+  margin-top: 28px;
+  padding: 13px;
+  border: 1px solid #334060;
+  border-radius: 4px;
+  background: transparent;
+  color: #9fb0d0;
+  font-size: 14px;
+  letter-spacing: 4px;
+  transition: border-color 0.2s, color 0.2s, background 0.2s, opacity 0.2s;
+}
+.next-btn:hover:not(:disabled) {
+  border-color: #4c5d8c;
+  color: #d5def2;
+  background: rgba(90,120,190,0.07);
+}
+.next-btn:disabled { opacity: 0.3; cursor: default; }
+
+/* 坏结局：文字慢慢乱码变淡 */
+.glitching .lab-title,
+.glitching .lab-subtitle,
+.glitching .intro-desc,
+.glitching .progress-line,
+.glitching .q-narration,
+.glitching .q-title,
+.glitching .opt,
+.glitching .next-btn {
+  animation: glitchFade 2.4s ease forwards;
+}
+@keyframes glitchFade {
+  0%   { opacity: 1;    filter: blur(0); }
+  15%  { opacity: 0.55; filter: blur(0.3px); transform: translateX(-1px); }
+  30%  { opacity: 0.9;  filter: blur(0);     transform: translateX(1px); }
+  50%  { opacity: 0.32; filter: blur(0.5px); transform: translateX(-1px); }
+  75%  { opacity: 0.13; filter: blur(0.9px); }
+  100% { opacity: 0.03; filter: blur(1.2px); transform: translateX(0); }
+}
+
+/* 结局覆盖层 */
+.ending-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  opacity: 0;
+  transition: opacity 2s ease;
+  overflow-y: auto;
+}
+.ending-overlay.show { display: flex; }
+.ending-overlay.fade-in { opacity: 1; }
+.ending-overlay.good { background: #f5f8fb; color: #2a3a4a; }
+.ending-overlay.bad  { background: #050505; color: #6a7480; }
+
+.ending-text {
+  max-width: 620px;
+  font-size: 15px;
+  letter-spacing: 1px;
+  line-height: 2.2;
+  opacity: 0;
+  transition: opacity 2s ease;
+  white-space: pre-line;
+}
+.ending-text.visible { opacity: 1; }
+
+/* 结局中的最后一句大字 */
+.ending-final {
+  display: block;
+  margin-top: 26px;
+  font-size: 20px;
+  letter-spacing: 4px;
+  line-height: 2;
+}
+
+/* 返回博客按钮 */
+.ending-back {
+  margin-top: 46px;
+  padding: 10px 30px;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  background: transparent;
+  color: inherit;
+  font-size: 13px;
+  letter-spacing: 3px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.5s ease;
+}
+.ending-back.show { opacity: 0.62; pointer-events: auto; }
+.ending-back:hover { opacity: 1; }
+
+/* 响应式 */
+@media (max-width: 820px) {
+  .lab-wrap { padding: 34px 16px 70px; }
+  .lab-title { font-size: 21px; letter-spacing: 4px; }
+  .lab-subtitle { margin-bottom: 26px; }
+  .intro-desc { font-size: 14px; margin-bottom: 32px; }
+  .q-narration { font-size: 13px; }
+  .q-title { font-size: 15.5px; }
+  .opt { font-size: 13.5px; padding: 13px 14px; }
+  .btn-line { width: 100%; text-align: center; padding: 12px 0; }
+  .ending-text { font-size: 14px; }
+  .ending-final { font-size: 17px; letter-spacing: 2px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="noise"></div>
+
+<div class="lab-wrap" id="labWrap">
+
+  <a class="lab-leave" href="blog.html">← 返回顾星的博客</a>
+
+  <h1 class="lab-title">记忆核验室</h1>
+  <p class="lab-subtitle">MEMORY VERIFICATION</p>
+
+  <!-- ========== 开篇超长导入 ========== -->
+  <section id="introView">
+    <p class="intro-desc">你穿越2015时间线，看完了顾星完整的消失轨迹。
+从正常、异常、透明、虚化、彻底抹除。
+你见证了他整整一个月的恐惧、无助、孤独、绝望。
+世界删除了他的一切：物品、照片、记录、他人记忆。
+唯独你的记忆侥幸留存。
+但记忆会褪色、时间会冲刷、人脑会模糊真相。
+现在系统将对你进行【记忆完整度核验】。
+十段记忆碎片，十道真相考题。
+你答对越多，记忆越牢固，顾星存在的证据越稳固。
+遗忘越多，真相彻底崩塌，彻底归零。</p>
+    <button type="button" class="btn-line" id="startBtn">开始核验</button>
+  </section>
+
+  <!-- ========== 答题区 ========== -->
+  <section id="quizView" class="quiz-view" hidden>
+    <div class="progress-line">第 <b id="qIndex">1</b> / 10 题</div>
+
+    <div class="q-block" id="qBlock">
+      <div class="q-narration" id="qNarration"></div>
+      <div class="q-title" id="qTitle"></div>
+      <div class="q-options" id="qOptions"></div>
+    </div>
+
+    <button type="button" class="next-btn" id="nextBtn" disabled>下一题</button>
+  </section>
+
+</div>
+
+<!-- 结局覆盖层 -->
+<div class="ending-overlay" id="endingOverlay">
+  <div class="ending-text" id="endingText"></div>
+  <button type="button" class="ending-back" id="endingBack">返回博客主页</button>
+</div>
+
+<script>
+/* ============================================================
+   记忆核验室 · 脚本
+   ============================================================ */
+(function () {
+  'use strict';
+
+  /* ----------------------------------------------------------
+     题库：10 道高难度剧情题（对应加长版博客内容）
+     每题包含：旁白 narration + 题干 q + 选项 + 答案
+     ---------------------------------------------------------- */
+  var QUESTIONS = [
+    {
+      narration: '记忆的第一块碎片。\n2015年的九月，新学期开始。你记得那时候天气还很热，教室里的风扇吱呀作响。你和顾星还是同桌，和过去九年里的每一个九月一样。\n可是这个九月，和以往任何一个九月都不一样。',
+      q: '顾星开始出现异常现象的月份是？',
+      options: ['8月', '9月', '10月', '7月'],
+      answer: 'B'
+    },
+    {
+      narration: '记忆的第二块碎片。\n那天顾星跟你说了好几次话，你都没太听清。后来他告诉你，他喊前排同学的名字，没有人回头。他以为只是没注意，可是连续好几次——你记得他说话时声音有点发抖。',
+      q: '顾星第一次发现别人听不见他说话是？',
+      options: ['9月1日', '9月8日', '9月12日', '9月20日'],
+      answer: 'B'
+    },
+    {
+      narration: '记忆的第三块碎片。\n体育课，分组。老师清点人数。顾星站在队伍里，像一个影子。全班几十个人，没有一个人看见他。只有你转过头，问他怎么不站过来。\n那一天他确认了一件事。',
+      q: '顾星在哪一天确认：全世界只有林屿看得见他？',
+      options: ['9月8日', '9月12日', '9月18日', '9月23日'],
+      answer: 'B'
+    },
+    {
+      narration: '记忆的第四块碎片。\n存在感消失，不只是人看不见他。他的东西也在慢慢消失。笔袋、水杯、作业本……一样一样地从世界里褪去。\n可是有一件东西，当时还在。',
+      q: '随着存在感消失，顾星最先消失的物品不包括？',
+      options: ['笔袋', '水杯', '书包', '作业本记录'],
+      answer: 'C'
+    },
+    {
+      narration: '记忆的第五块碎片。\n那天晚上，顾星搜自己的名字。全网空白。小学获奖记录、班级名单、所有曾经出现过他的地方，全部消失。他坐在电脑前，很久没有动。',
+      q: '顾星在哪一天发现全网彻底搜不到自己的任何记录？',
+      options: ['9月18日', '9月20日', '9月23日', '9月26日'],
+      answer: 'B'
+    },
+    {
+      narration: '记忆的第六块碎片。\n最接近终点的一天。一整天除了你，没有任何人和他说话。他走路会被人直接穿过身体。他的影子偶尔会消失几秒。\n他快要不再属于这个世界了。',
+      q: '顾星彻底身体虚化、被人穿身、影子消失是哪天？',
+      options: ['9月20日', '9月23日', '9月26日', '9月28日'],
+      answer: 'B'
+    },
+    {
+      narration: '记忆的第七块碎片。\n博客右下角，有一行极小极小的灰字。你曾经差点错过它。点开之后，是一段加密的短日记，记录着抹除机制的最终规则。',
+      q: '世界抹除机制的最终归零条件是？',
+      options: ['本人消失', '所有人遗忘', '最后记得的人遗忘', '时间到期'],
+      answer: 'C'
+    },
+    {
+      narration: '记忆的第八块碎片。\n留言板上有那么多条留言，可有一条格外不同。没有作者，没有文字，只有发布时间。\n那一年，顾星已经消失很久了。',
+      q: '留言板出现空白诡异留言的年份是？',
+      options: ['2015', '2016', '2020', '2023'],
+      answer: 'B'
+    },
+    {
+      narration: '记忆的第九块碎片。\n这是最后的日期。最后一天。最后一篇日记。\n你记得那个日子，从那以后，世界就彻底安静了。',
+      q: '顾星彻底被世界完全抹除的最终日期是？',
+      options: ['9月23日', '9月26日', '9月28日', '10月1日'],
+      answer: 'C'
+    },
+    {
+      narration: '最后一块碎片。\n顾星最后写下的话，没有恐惧，没有怨恨。只有一句话，只有一个人。\n那是他最后的执念，最后的希望，最后的求救。',
+      q: '顾星最后坚持、最后执念、最后唯一的希望是？',
+      options: ['被世界记住', '被所有人原谅', '被林屿永远记住', '重新出现'],
+      answer: 'C'
+    }
+  ];
+
+  var LETTERS = ['A', 'B', 'C', 'D'];
+
+  /* ---------- DOM ---------- */
+  var labWrap   = document.getElementById('labWrap');
+  var introView = document.getElementById('introView');
+  var quizView  = document.getElementById('quizView');
+  var startBtn  = document.getElementById('startBtn');
+
+  var qIndexEl   = document.getElementById('qIndex');
+  var qBlock     = document.getElementById('qBlock');
+  var qNarration = document.getElementById('qNarration');
+  var qTitle     = document.getElementById('qTitle');
+  var qOptions   = document.getElementById('qOptions');
+  var nextBtn    = document.getElementById('nextBtn');
+
+  var endingOverlay = document.getElementById('endingOverlay');
+  var endingText    = document.getElementById('endingText');
+  var endingBack    = document.getElementById('endingBack');
+
+  /* ---------- 状态 ---------- */
+  var currentIndex = 0;
+  var correctCount = 0;   // 内部统计，不展示
+  var pickedLetter = null;
+
+  /* ---------- 开始核验 ---------- */
+  startBtn.addEventListener('click', function () {
+    introView.hidden = true;
+    quizView.hidden  = false;
+    currentIndex = 0;
+    correctCount = 0;
+    pickedLetter = null;
+    renderQuestion();
+  });
+
+  /* ---------- 渲染当前题目 ---------- */
+  function renderQuestion() {
+    var item = QUESTIONS[currentIndex];
+
+    qIndexEl.textContent   = String(currentIndex + 1);
+    qNarration.textContent = item.narration;
+    qTitle.textContent     = item.q;
+
+    qOptions.innerHTML = '';
+    LETTERS.forEach(function (letter, i) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'opt';
+      btn.dataset.letter = letter;
+      btn.innerHTML =
+        '<span class="opt-letter">' + letter + '</span>' +
+        '<span class="opt-text">' + item.options[i] + '</span>';
+      qOptions.appendChild(btn);
+    });
+
+    pickedLetter = null;
+    nextBtn.disabled = true;
+    nextBtn.textContent = (currentIndex === QUESTIONS.length - 1) ? '提交核验' : '下一题';
+
+    qBlock.classList.remove('anim');
+    void qBlock.offsetWidth;
+    qBlock.classList.add('anim');
+  }
+
+  /* ---------- 选择选项 ---------- */
+  qOptions.addEventListener('click', function (e) {
+    var btn = e.target.closest('.opt');
+    if (!btn) return;
+    Array.prototype.forEach.call(qOptions.children, function (child) {
+      child.classList.remove('selected');
+    });
+    btn.classList.add('selected');
+    pickedLetter = btn.dataset.letter;
+    nextBtn.disabled = false;
+  });
+
+  /* ---------- 下一题 / 提交核验 ---------- */
+  nextBtn.addEventListener('click', function () {
+    if (!pickedLetter) return;
+    if (pickedLetter === QUESTIONS[currentIndex].answer) correctCount++;
+    currentIndex++;
+    if (currentIndex < QUESTIONS.length) {
+      renderQuestion();
+    } else {
+      finishQuiz();
+    }
+  });
+
+  /* ---------- 结局判定 ---------- */
+  function finishQuiz() {
+    document.body.classList.add('ending-active');
+    endingOverlay.className = 'ending-overlay';
+    endingText.textContent = '';
+    endingText.className = 'ending-text';
+    endingBack.classList.remove('show');
+
+    if (correctCount >= 6) {
+      showGoodEnding();
+    } else {
+      showBadEnding();
+    }
+  }
+
+  /* ---------- 微光真结局 ---------- */
+  function showGoodEnding() {
+    endingOverlay.classList.add('show', 'good');
+
+    // 主页面短暂提亮，象征记忆被重新点亮
+    labWrap.style.transition = 'filter 1.8s ease';
+    labWrap.style.filter = 'brightness(1.35)';
+    setTimeout(function () {
+      labWrap.style.filter = '';
+      labWrap.style.transition = '';
+    }, 1900);
+
+    setTimeout(function () {
+      endingOverlay.classList.add('fade-in');
+
+      setTimeout(function () {
+        endingText.textContent =
+          '你完整记住了所有碎片。\n' +
+          '从九月初的日常，到九月末的消散。\n' +
+          '你记得他的恐惧、他的孤独、他无人倾听的求救。\n' +
+          '世界删除了他的照片、删除了他的物品、删除了所有人的记忆。\n' +
+          '世界成功抹除了"顾星"。\n' +
+          '——唯独没有抹除你的记忆。\n\n' +
+          '你用八年的执念、完整的回忆、清晰的碎片，\n' +
+          '重新锚定了他的存在。\n\n' +
+          '原来所谓「找到我」\n' +
+          '从来不是找一个消失的人。\n' +
+          '是守住一个被全世界遗忘的灵魂。\n\n' +
+          '屏幕缓缓浮现终章：';
+        endingText.classList.add('visible');
+
+        setTimeout(function () {
+          endingText.innerHTML +=
+            '<span class="ending-final">「你找到我了。<br>谢谢你，没有让我彻底消失。<br>记得，即是永恒。」</span>';
+          setTimeout(function () {
+            endingBack.classList.add('show');
+          }, 2200);
+        }, 2600);
+      }, 1500);
+    }, 100);
+  }
+
+  /* ---------- 归零坏结局 ---------- */
+  function showBadEnding() {
+    // 文字先乱码变淡
+    labWrap.classList.add('glitching');
+
+    setTimeout(function () {
+      endingOverlay.classList.add('show', 'bad');
+
+      setTimeout(function () {
+        endingOverlay.classList.add('fade-in');
+
+        setTimeout(function () {
+          endingText.textContent =
+            '你的记忆已经残缺不全。\n' +
+            '你记不清他消失的过程、记不清他的恐惧、记不清他最后的期盼。\n' +
+            '时间冲刷了你的回忆。\n' +
+            '世界的遗忘机制，最终同化了最后一个记得他的人。\n\n' +
+            '曾经有人拼尽全力、害怕被全世界忘记。\n' +
+            '最后，连唯一的朋友也慢慢模糊了他的模样。\n\n' +
+            '所有日记失效、所有照片空白、所有留言消散。\n' +
+            '世间再也没有任何证据，证明顾星曾经存在过。\n\n' +
+            '屏幕文字逐渐乱码、淡化、消失';
+          endingText.classList.add('visible');
+
+          // 最后一行灰字：延迟出现，模拟"消散之后剩下的残响"
+          setTimeout(function () {
+            endingText.innerHTML +=
+              '<span class="ending-final" style="opacity:0.55;font-size:14px;letter-spacing:2px;">' +
+              '「这一次，彻底没人记得了。」</span>';
+            setTimeout(function () {
+              endingBack.classList.add('show');
+            }, 1800);
+          }, 2800);
+        }, 1500);
+      }, 100);
+    }, 1600);
+  }
+
+  /* ---------- 返回博客主页 ---------- */
+  endingBack.addEventListener('click', function () {
+    window.location.href = 'blog.html';
+  });
+
+})();
+</script>
+
+</body>
+</html>
